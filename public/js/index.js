@@ -245,17 +245,47 @@ window.onload = function() {
   var py = 15;
   var ax = 15;
   var ay = 15;
-  // var colorSnake = 'gray';
-  // var colorSnake = 'green';
-  var colorSnakeLive = 'lime';
-  var colorSnakeDeath = 'gray';
-  var colorSnake = colorSnakeLive;
+  var colorSnakeLive;
+  var colorSnake2Live;
+  var colorSnakeDeath;
+  var colorSnake2Death;
+  
+  const snakeStyles = [
+    {
+      colorLive1:  '#0f0', colorLive2:  '#0f0',
+      colorDeath1: 'gray', colorDeath2: 'gray',
+      colorAppe: '#f00',
+      colorBackgroud: '#00f',
+      sep: 1
+    },
+    {
+      colorLive1:  '#0f0', colorLive2:  '#080',
+      colorDeath1: '#999', colorDeath2: '#666',
+      colorAppe: '#f00',
+      colorBackgroud: '#00f',
+      sep: 0
+    },
+    {
+      colorLive1:  '#f00', colorLive2:  '#333',
+      colorDeath1: '#999', colorDeath2: '#666',
+      colorAppe: '#0f0',
+      colorBackgroud: '#00f',
+      sep: 0
+    },
+  ]
+  
+  var snakeStyle = 0;
+  var colorSnake;
+  var colorSnake2;
+  var sepSnake;
+  
   var death = false;
-
+  
   var trail = [];
   // const tailInitial = 5;
   const tailInitial = 4;
   var tail = tailInitial;
+  const freeHead = 4;
 
   var pause = false;
   var secondScoreType = 'record';
@@ -277,6 +307,12 @@ window.onload = function() {
       return;
     }
 
+    colorSnakeLive = snakeStyles[snakeStyle].colorLive1;
+    colorSnake2Live = snakeStyles[snakeStyle].colorLive2;
+    colorSnakeDeath = snakeStyles[snakeStyle].colorDeath1;
+    colorSnake2Death = snakeStyles[snakeStyle].colorDeath2;
+    sepSnake = snakeStyles[snakeStyle].sep;
+
     px += vx;
     py += vy;
     if (px < 0) {
@@ -292,45 +328,15 @@ window.onload = function() {
       py = 0;
     }
 
-    // ctx.fillStyle = 'black';
-    // ctx.fillStyle = 'yellow';
-    ctx.fillStyle = 'blue';
-    ctx.fillRect(0, 0, stage.width, stage.height);
-
-    ctx.fillStyle = 'red';
-    ctx.fillRect(ax * tp, ay * tp, tp, tp);
-
-    ctx.fillStyle = colorSnake;
-    for (var i = 0; i < trail.length; i++) {
-      ctx.fillRect(
-        trail[i].x * tp,
-        trail[i].y * tp,
-        tp-1, tp-1
-      );
-      if (i>=3 && start && trail[i].x == px && trail[i].y == py) {
-        death = true;
-        deathSound.cloneNode(true).play();
-        restartCount = 10;
-        start = false;
-        interval = intervalInicial;
-        updateInterval();
-      }
+    if (!death) {
+      trail.push({
+        x: px,
+        y: py
+      });
     }
-
-    if (death) {
-      vx = vy = 0;
-      tail = tailInitial;
-      pause = false;
-      colorSnake = colorSnakeDeath;
+    else if (tail > tailInitial) {
+      tail--;
     }
-    else {
-      colorSnake = colorSnakeLive;
-    }
-
-    trail.push({
-      x: px,
-      y: py
-    });
     while (trail.length > tail) {
       trail.shift();
     }
@@ -360,6 +366,29 @@ window.onload = function() {
       while (appeInTrail);
     }
 
+    for (var i = 0; i < trail.length; i++) {
+      if (i<=trail.length-freeHead && start && trail[i].x == px && trail[i].y == py) {
+        death = true;
+        deathSound.cloneNode(true).play();
+        restartCount = 10;
+        start = false;
+        interval = intervalInicial;
+        updateInterval();
+      }
+    }
+
+    if (death) {
+      vx = vy = 0;
+      // tail = tailInitial;
+      pause = false;
+      colorSnake = colorSnakeDeath;
+      colorSnake2 = colorSnake2Death;
+    }
+    else {
+      colorSnake = colorSnakeLive;
+      colorSnake2 = colorSnake2Live;
+    }
+
     if (restartCount>0) {
       restartCount--;
     }
@@ -385,6 +414,26 @@ window.onload = function() {
       } 
     }
     */
+
+    // DRAW
+    // ------------------------
+    // ctx.fillStyle = 'black';
+    // ctx.fillStyle = 'yellow';
+    ctx.fillStyle = snakeStyles[snakeStyle].colorBackgroud;
+    ctx.fillRect(0, 0, stage.width, stage.height);
+
+    ctx.fillStyle = snakeStyles[snakeStyle].colorAppe;
+    ctx.fillRect(ax * tp, ay * tp, tp, tp);
+
+    for (var i = 0; i < trail.length; i++) {
+      // ctx.fillStyle = i>=trail.length-freeHead ? colorSnake2 : colorSnake;
+      ctx.fillStyle = (trail.length-1-i) % 2 == 0 ? colorSnake : colorSnake2;
+      ctx.fillRect(
+        trail[i].x * tp,
+        trail[i].y * tp,
+        tp - sepSnake, tp - sepSnake
+      );
+    }
   }
 
   function setScore(s) {
@@ -435,6 +484,22 @@ window.onload = function() {
     recordLabel.style.color = recordColor;
   }
 
+  function randomInt(min, max) {
+    return min + Math.floor((max - min) * Math.random());
+  }
+
+  function resume() {
+    if (death) {
+      setScore(0);
+      death = false;
+      tail = tailInitial;
+    }
+    if (!start) {
+      start = true;
+      snakeStyle = randomInt(0, snakeStyles.length);
+    }
+  }
+
   function moveLeft() {
     if (restartCount>0) {
       return;
@@ -444,9 +509,7 @@ window.onload = function() {
       return;
     }
 
-    if (death) setScore(0);
-    death = false;
-    start = true;
+    resume();
 
     vx = -vel;
     vy = 0;
@@ -461,9 +524,7 @@ window.onload = function() {
       return;
     }
 
-    if (death) setScore(0);
-    death = false;
-    start = true;
+    resume();
 
     vx = 0;
     vy = -vel;
@@ -479,9 +540,7 @@ window.onload = function() {
       return;
     }
 
-    if (death) setScore(0);
-    death = false;
-    start = true;
+    resume();
 
     vx = vel;
     vy = 0;
@@ -496,9 +555,7 @@ window.onload = function() {
       return;
     }
 
-    if (death) setScore(0);
-    death = false;
-    start = true;
+    resume();
 
     vx = 0;
     vy = vel;
