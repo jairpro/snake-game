@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      outline: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      /* background: #191920 url(${background}) no-repeat center top; */
+      -webkit-font-smoothing: antialiased;
+    }    
+
+    /*body {
+      margin: 0;
+      font-family: Helvetica, Arial, sans-serif;
+    }*/
+
+    body, input, button {
+      font: 14px Roboto, sans-serif;
+      font-weight: bold;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    #container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      width: 100vw;
+      background: black;
+      color: #FFF;
+    }
+
+    #status {
+      display: flex;
+      width: 100%;
+      flex-direction: row;
+      justify-content: space-around;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      margin-bottom: 1vh;
+      font-size: 18px;
+      font-size: 4vh;
+      font-size: 4vw;
+    }
+
+    #previous {
+      /* background: #444; */
+      width: 30%;
+      text-align: left; 
+    }
+    #previous span {
+      margin-left: 5px;
+      margin-left: 1.5vw;
+    }
+
+    #score {
+      /* background: #999; */
+      width: 30%;
+      text-align: right; 
+    }
+    #score span {
+      margin-left: 5px;
+      margin-left: 1.5vw;
+    }
+
+    #record {
+      /* background: #666; */
+      color: lime;
+      width: 30%;
+      text-align: center;
+    }
+    #record span {
+      margin-left: 5px;
+      margin-left: 1.5vw;
+    }
+
+    #stage {
+      cursor: none;
+      border-radius: 4px;
+    }
+    #debug {
+      text-align: center;
+      width: 100%;
+      margin-top:5px;
+      font-size: 18px;
+    }
+  </style>
+  <script src="js/joypad.js-2.1.3/dist/joypad.js"></script>
+  <script src="js/joypad.js"></script>
+
+  <script src="js/touchpad/hammer.min.js"></script>
+  <script src="js/MyTouchpad.js"></script>
+</head>
+<body>
+
+  <div id=container>
+    <div id=content>
+      <div id=status>
+        <label id="previous">ANTERIOR<span></span></label>
+        <label id="record">MELHOR<span></span></label>
+        <label id="score">PONTOS<span></span></label>
+      </div>
+      <canvas id="stage" width="400" height="400"></canvas>
+      <div id=debug></div>
+    </div>
+  </div>
+
+  <script src="js/index.js"></script>
+  
+</body>
+</html>

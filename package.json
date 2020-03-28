@@ -1,0 +1,15 @@
+{
+  "name": "snake",
+  "version": "1.0.0",
+  "main": "public/index.html",
+  "author": "Jair Dias <jairedias@gmail.com> - sjairpro.tk",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.8.7"
+  }
+}
